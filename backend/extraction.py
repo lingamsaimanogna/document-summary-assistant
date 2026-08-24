@@ -1,0 +1,27 @@
+import pymupdf
+from PIL import Image
+import pytesseract
+
+pytesseract.pytesseract.tesseract_cmd = (
+    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+)
+
+def extract_text_from_pdf(file_path):
+    text = ""
+
+    document = pymupdf.open(file_path)
+
+    for page in document:
+        text += page.get_text()
+
+    document.close()
+
+    return text
+
+
+def extract_text_from_image(file_path):
+    image = Image.open(file_path)
+
+    text = pytesseract.image_to_string(image)
+
+    return text
