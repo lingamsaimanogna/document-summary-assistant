@@ -3,13 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import tempfile
 import os
 
-from extraction import (
-    extract_text_from_pdf,
-    extract_text_from_image
-)
-
-
+from extraction import extract_text_from_pdf
 from summarizer import generate_summary
+
 
 app = FastAPI(
     title="Document Summary Assistant",
@@ -17,18 +13,12 @@ app = FastAPI(
     version="1.0.0"
 )
 
+
+# Allow the frontend to access the backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -44,47 +34,29 @@ def root():
 @app.post("/extract-text")
 async def extract_text(file: UploadFile = File(...)):
 
-    allowed_types = {
-        "application/pdf",
-        "image/png",
-        "image/jpeg"
-    }
-
-    if file.content_type not in allowed_types:
+    if file.content_type != "application/pdf":
         raise HTTPException(
             status_code=400,
-            detail="Please upload a PDF, PNG, JPG or JPEG file."
+            detail="Please upload a PDF file."
         )
 
     contents = await file.read()
 
-    file_extension = ".pdf"
-
-    if file.content_type == "image/png":
-        file_extension = ".png"
-    elif file.content_type == "image/jpeg":
-        file_extension = ".jpg"
-
     with tempfile.NamedTemporaryFile(
         delete=False,
-        suffix=file_extension
+        suffix=".pdf"
     ) as temp_file:
 
         temp_file.write(contents)
         temp_path = temp_file.name
 
     try:
-
-        if file.content_type == "application/pdf":
-            text = extract_text_from_pdf(temp_path)
-
-        else:
-            text = extract_text_from_image(temp_path)
+        text = extract_text_from_pdf(temp_path)
 
         if not text.strip():
             raise HTTPException(
                 status_code=400,
-                detail="No readable text found in this document."
+                detail="No readable text found in this PDF."
             )
 
         return {
@@ -93,7 +65,8 @@ async def extract_text(file: UploadFile = File(...)):
         }
 
     finally:
-        os.remove(temp_path)
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
 
 @app.post("/summarize")
@@ -102,52 +75,35 @@ async def summarize_document(
     summary_length: str = "medium"
 ):
 
-    allowed_types = {
-        "application/pdf",
-        "image/png",
-        "image/jpeg"
-    }
-
-    if file.content_type not in allowed_types:
+    if file.content_type != "application/pdf":
         raise HTTPException(
             status_code=400,
-            detail="Please upload a PDF, PNG, JPG or JPEG file."
+            detail="Please upload a PDF file."
         )
 
     if summary_length not in {"short", "medium", "long"}:
         raise HTTPException(
             status_code=400,
-            detail="Invalid summary length."
+            detail="Invalid summary length. Choose short, medium or long."
         )
 
     contents = await file.read()
 
-    file_extension = ".pdf"
-
-    if file.content_type == "image/png":
-        file_extension = ".png"
-    elif file.content_type == "image/jpeg":
-        file_extension = ".jpg"
-
     with tempfile.NamedTemporaryFile(
         delete=False,
-        suffix=file_extension
+        suffix=".pdf"
     ) as temp_file:
 
         temp_file.write(contents)
         temp_path = temp_file.name
 
     try:
-
-        if file.content_type == "application/pdf":
-            text = extract_text_from_pdf(temp_path)
-        else:
-            text = extract_text_from_image(temp_path)
+        text = extract_text_from_pdf(temp_path)
 
         if not text.strip():
             raise HTTPException(
                 status_code=400,
-                detail="No readable text found in this document."
+                detail="No readable text found in this PDF."
             )
 
         result = generate_summary(
@@ -161,4 +117,5 @@ async def summarize_document(
         }
 
     finally:
-        os.remove(temp_path)
+        if os.path.exists(temp_path):
+            os.remove(temp_path)

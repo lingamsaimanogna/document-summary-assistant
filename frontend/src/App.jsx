@@ -10,20 +10,12 @@ function App() {
   const [extractedText, setExtractedText] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const allowedTypes = [
-    "application/pdf",
-    "image/png",
-    "image/jpeg"
-  ];
-
   const handleFile = (selectedFile) => {
     if (!selectedFile) return;
 
-    if (!allowedTypes.includes(selectedFile.type)) {
+    if (selectedFile.type !== "application/pdf") {
       setFile(null);
-      setPopupMessage(
-        "Please upload a PDF, PNG, JPG or JPEG file."
-      );
+      setPopupMessage("Please upload a PDF file.");
       setShowPopup(true);
       return;
     }
@@ -47,31 +39,38 @@ function App() {
 
   const handleSummarize = async () => {
     if (!file) {
-      setPopupMessage("Please select a document first.");
+      setPopupMessage("Please select a PDF file first.");
       setShowPopup(true);
       return;
     }
+
     setLoading(true);
     setExtractedText("");
+
     const formData = new FormData();
+
     formData.append("file", file);
     formData.append("summary_length", summaryLength);
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/summarize`,
         formData
       );
+
       setExtractedText(response.data.result);
-    } catch (error) { 
+    } catch (error) {
       const message =
         error.response?.data?.detail ||
         "Unable to generate summary.";
+
       setPopupMessage(message);
       setShowPopup(true);
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div className="app">
       <div className="container">
@@ -79,7 +78,7 @@ function App() {
         <h1>Document Summary Assistant</h1>
 
         <p className="subtitle">
-          Upload a PDF or image and generate an intelligent summary
+          Upload a PDF and generate an intelligent summary
         </p>
 
         <div
@@ -91,21 +90,22 @@ function App() {
 
           <h2>Upload your document</h2>
 
-          <p>Drag and drop your file here</p>
+          <p>Drag and drop your PDF here</p>
           <p>or</p>
 
           <label className="upload-button">
             Choose File
+
             <input
               type="file"
-              accept=".pdf,.png,.jpg,.jpeg"
+              accept=".pdf,application/pdf"
               onChange={handleFileChange}
               hidden
             />
           </label>
 
           <p className="file-types">
-            Supported formats: PDF, PNG, JPG, JPEG
+            Supported format: PDF
           </p>
 
           {file && (
@@ -151,14 +151,19 @@ function App() {
             disabled={!file || loading}
             onClick={handleSummarize}
           >
-            {loading ? "Generating Summary..." : "Summarize Document"}
+            {loading
+              ? "Generating Summary..."
+              : "Summarize Document"}
           </button>
+
           {loading && (
             <p className="loading-message">
               Extracting text and generating your summary...
             </p>
           )}
+
         </div>
+
         {extractedText && (
           <div className="result-section">
             <h2>Generated Summary</h2>
@@ -171,6 +176,7 @@ function App() {
 
         {showPopup && (
           <div className="popup-overlay">
+
             <div className="popup">
 
               <div className="popup-icon">⚠️</div>
@@ -187,6 +193,7 @@ function App() {
               </button>
 
             </div>
+
           </div>
         )}
 
