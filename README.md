@@ -29,20 +29,8 @@ A simple web application that takes a PDF or image document and generates a summ
 * Google Gemini API for summarization
 
 ## How it works
-Upload document
-       ↓
-React frontend
-       ↓
-FastAPI backend
-       ↓
-PDF → PyMuPDF
-Image → Tesseract OCR
-       ↓
-Extracted text
-       ↓
-Gemini AI
-       ↓
-Summary + Key Points
+<img width="120" height="218" alt="image" src="https://github.com/user-attachments/assets/06a75783-c8cb-4a52-a883-9b419cff577f" />
+
 
 ## Project Structure
 <img width="150" height="228" alt="image" src="https://github.com/user-attachments/assets/2b9e55aa-ebdd-45be-a24f-1498d0a55f2e" />
