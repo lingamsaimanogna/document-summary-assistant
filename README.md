@@ -45,21 +45,8 @@ Gemini AI
 Summary + Key Points
 
 ## Project Structure
-document-summary-assisstant/
-│
-├── frontend/
-│   ├── src/
-│   ├── public/
-│   └── package.json
-│
-├── backend/
-│   ├── main.py
-│   ├── extraction.py
-│   ├── summarizer.py
-│   └── requirements.txt
-│
-├── .gitignore
-└── README.md
+<img width="150" height="228" alt="image" src="https://github.com/user-attachments/assets/2b9e55aa-ebdd-45be-a24f-1498d0a55f2e" />
+
 
 ## How to Run
 ### Requirements
