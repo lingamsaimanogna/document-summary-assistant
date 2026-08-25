@@ -1,11 +1,14 @@
 # Document Summary Assistant
-A simple web application that takes a PDF or image document and generates a summary using AI.
+A simple web application that takes a PDF document and generates a summary using AI.
+
+## Working Application URL - Live Demo Link
+https://document-summary-assistant-taupe.vercel.app
 
 ## What it does
-* Upload PDF, PNG, JPG or JPEG files
+* Upload PDF files
 * Supports drag and drop
 * Extracts text from PDFs
-* Uses OCR for images and scanned documents
+* Extracts text from PDF documents
 * Generates short, medium or long summaries
 * Shows important key points
 * Shows loading and error messages
@@ -24,8 +27,6 @@ A simple web application that takes a PDF or image document and generates a summ
 
 **Other**
 * PyMuPDF for PDF text extraction
-* Tesseract OCR for images
-* Pillow for image processing
 * Google Gemini API for summarization
 
 ## How it works
@@ -41,7 +42,7 @@ A simple web application that takes a PDF or image document and generates a summ
 Make sure you have:
 * Python 3.x
 * Node.js and npm
-* Tesseract OCR
+* A Google Gemini API key
 
 ### Backend
 Open a terminal and go to the backend folder:
@@ -97,12 +98,12 @@ npm run dev
 
 
 ## Notes
-The Gemini API key is stored in `.env` and should not be uploaded to GitHub.
-The application currently processes one document at a time.
+* The Gemini API key is stored in `.env` and should not be uploaded to GitHub.
+* The application currently processes one document at a time.
 
 ## Future Improvements
-* Better formatting of generated summaries
-* Download summary option
-* Document history
-* Support for larger documents
-* Improved OCR for low-quality scans
+* Improve the formatting of generated summaries
+* Add an option to download summaries
+* Add document history
+* Support larger documents
+* Improve OCR for low-quality scanned documents
